@@ -1,0 +1,37 @@
+{
+  "name": "@ics-vcr/agent-system-prototype",
+  "version": "1.0.0",
+  "description": "Minimal AI agent configuration framework for GitHub Copilot CLI",
+  "type": "module",
+  "main": "core/schema/index.ts",
+  "scripts": {
+    "generate": "tsx generators/copilot-cli/generate-agent.ts",
+    "generate:examples": "tsx generators/copilot-cli/generate-agent.ts examples/index.ts",
+    "test": "tsx tests/run-all-tests.ts",
+    "test:context": "tsx tests/run-all-tests.ts context",
+    "test:prompts": "tsx tests/run-all-tests.ts prompts",
+    "test:001": "tsx tests/cases/context/001-inline-context/index.ts",
+    "test:002": "tsx tests/cases/context/002-registry-chips/index.ts",
+    "test:003": "tsx tests/cases/context/003-direct-path-chips/index.ts",
+    "test:004": "tsx tests/cases/context/004-mixed-context/index.ts",
+    "test:005": "tsx tests/cases/prompts/005-role-behavior-permissions/index.ts"
+  },
+  "keywords": [
+    "ai",
+    "agent",
+    "copilot",
+    "github",
+    "typescript",
+    "framework"
+  ],
+  "author": "ICS-SA",
+  "license": "MIT",
+  "peerDependencies": {
+    "zod": "^4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}
