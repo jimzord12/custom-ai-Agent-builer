@@ -96,7 +96,7 @@ export const myAgent: AgentConfig = {
    *                     All tools available without limitations
    */
   permissions: {
-    level: 'controlled'
+    level: 'controlled',
   },
 
   /**
@@ -113,102 +113,41 @@ export const myAgent: AgentConfig = {
    * - 'conservative' : Safe, proven approaches, prefers stability, risk-averse
    */
   behavior: {
-    profile: 'detailed'
+    profile: 'detailed',
   },
 
   // ----------------------------------------------------------------------------
   // OPTIONAL CONTEXT (Customize for your project)
   // ----------------------------------------------------------------------------
 
+  /**
+   * Context Chips
+   *
+   * Reference external markdown files using the registry-based context chips system.
+   * Each registry (e.g., 'frontend') contains predefined chip IDs that map to markdown files.
+   *
+   * USAGE:
+   * context: {
+   *   registryName: new Set(['chipId1', 'chipId2'])
+   * }
+   *
+   * AVAILABLE REGISTRIES:
+   * - 'frontend' - Contains chips for frontend projects
+   *
+   * AVAILABLE CHIP IDs (frontend registry):
+   * - 'constitution'      - Project goals, values, non-negotiable rules
+   * - 'architecture'      - System design, module structure, data flow
+   * - 'api-guidelines'    - REST API design standards
+   * - 'testing-standards' - Testing guidelines and best practices
+   * - 'code-style'        - Code formatting and naming conventions
+   *
+   * See: registries/frontend.registry.ts for the full registry
+   * Chip files location: contexts/*.context.md
+   */
   context: {
-    /**
-     * Tech Stack
-     *
-     * Define the technologies used in your project.
-     * This helps the agent understand your development environment.
-     *
-     * All fields are optional. Only include what's relevant.
-     */
-    techStack: {
-      framework: 'React Native', // e.g., React, Vue, Angular, Express
-      language: 'TypeScript', // e.g., TypeScript, JavaScript, Python
-      runtime: 'Node.js', // e.g., Node.js, Deno, Bun
-      packageManager: 'npm', // e.g., npm, yarn, pnpm
-      testing: 'Jest', // e.g., Jest, Vitest, Mocha
-      linting: 'ESLint', // e.g., ESLint, TSLint, Biome
-      database: 'SQLite', // e.g., PostgreSQL, MongoDB, MySQL
-      orm: 'TypeORM', // e.g., Prisma, TypeORM, Sequelize
-      stateManagement: ['Redux'], // e.g., Redux, Zustand, MobX
-      styling: 'React Native', // e.g., CSS Modules, Tailwind, Styled Components
-      buildTool: 'Metro' // e.g., Webpack, Vite, Metro, Rollup
-    },
-
-    /**
-     * Conventions
-     *
-     * Coding standards and naming patterns for your project.
-     * Ensures the agent follows your team's style.
-     */
-    conventions: {
-      fileNaming: 'kebab-case', // e.g., kebab-case, camelCase, PascalCase
-      componentNaming: 'PascalCase', // e.g., PascalCase, camelCase
-      functionNaming: 'camelCase', // e.g., camelCase, snake_case
-      testPattern: '**/*.test.ts', // e.g., **/*.test.ts, **/*.spec.js
-      importOrder: [
-        // Order of import statements
-        'external libraries',
-        'internal modules',
-        'components',
-        'types',
-        'styles'
-      ]
-    },
-
-    /**
-     * Patterns
-     *
-     * Architectural patterns and design guidelines.
-     * Helps the agent make decisions aligned with your codebase.
-     */
-    patterns: {
-      /**
-       * Preferred patterns the agent should use
-       */
-      preferred: ['Functional components with hooks', 'Composition over inheritance', 'Small, focused functions', 'Clear separation of concerns'],
-
-      /**
-       * Patterns the agent should avoid
-       */
-      forbidden: ['Class components (use functional components)', 'Direct DOM manipulation', 'Global state mutation'],
-
-      /**
-       * Overall architectural approach
-       */
-      architectural: 'Layered architecture with clean separation'
-    },
-
-    /**
-     * Context Chips
-     *
-     * Reference external markdown files for complex context.
-     * Useful for large documentation, guides, or standards.
-     *
-     * NOTE: Context chips are loaded from the project root.
-     * Create markdown files in `.github/agent-system-minimal/contexts/`
-     *
-     * Example chips (found at: `.github\agent-system-minimal\examples\context-chips`):
-     * - tech-stack.context.md    : Detailed tech stack info
-     * - constitution.context.md  : Project principles and values
-     * - architecture.context.md  : System design overview
-     */
-    chips: new Set([
-      // Uncomment and customize as needed:
-      // {
-      //   name: 'Tech Stack Details',
-      //   pathFromRoot: '.github/agent-system-minimal/contexts/<your-chip-file>.md'
-      // },
-    ])
-  }
+    // Example: Include constitution and architecture chips from frontend registry
+    frontend: new Set(['constitution', 'architecture']),
+  },
 };
 
 // ============================================================================
@@ -230,7 +169,7 @@ export const minimalAgent: AgentConfig = {
   description: 'A simple helper agent with minimal configuration',
   role: 'guide',
   permissions: { level: 'read-only' },
-  behavior: { profile: 'concise' }
+  behavior: { profile: 'concise' },
 };
 
 /**
@@ -244,10 +183,9 @@ export const codeReviewerExample: AgentConfig = {
   permissions: { level: 'read-only' },
   behavior: { profile: 'detailed' },
   context: {
-    patterns: {
-      preferred: ['Constructive and specific feedback', 'Identify security concerns', 'Check for performance issues', 'Verify test coverage']
-    }
-  }
+    // Use constitution chip to provide project values and standards
+    frontend: new Set(['constitution', 'code-style']),
+  },
 };
 
 /**
@@ -261,17 +199,9 @@ export const featureBuilderExample: AgentConfig = {
   permissions: { level: 'full' },
   behavior: { profile: 'autonomous' },
   context: {
-    techStack: {
-      framework: 'React',
-      language: 'TypeScript',
-      testing: 'Jest'
-    },
-    conventions: {
-      fileNaming: 'kebab-case',
-      componentNaming: 'PascalCase',
-      functionNaming: 'camelCase'
-    }
-  }
+    // Include architecture and code style for implementation guidance
+    frontend: new Set(['architecture', 'code-style', 'testing-standards']),
+  },
 };
 
 /**
@@ -286,9 +216,14 @@ export const docWriterExample: AgentConfig = {
   behavior: { profile: 'detailed' },
   context: {
     patterns: {
-      preferred: ['Clear and concise explanations', 'Include code examples', 'Use proper markdown formatting', 'Keep documentation up-to-date']
-    }
-  }
+      preferred: [
+        'Clear and concise explanations',
+        'Include code examples',
+        'Use proper markdown formatting',
+        'Keep documentation up-to-date',
+      ],
+    },
+  } as any,
 };
 
 // ============================================================================
