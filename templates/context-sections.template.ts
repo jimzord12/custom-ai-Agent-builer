@@ -1,10 +1,23 @@
 import type { AgentConfig } from '../core/schema/agent.schema';
 
 /**
- * CONTEXT SECTIONS TEMPLATE
+ * CONTEXT SECTIONS TEMPLATE (LEGACY - DEPRECATED)
  *
- * Templates for rendering different context sections in chatmode files.
- * These sections provide project-specific information to the AI agent.
+ * ⚠️ DEPRECATION NOTICE:
+ * These templates were used for rendering inline context (techStack, conventions, patterns)
+ * directly embedded in agent configurations.
+ *
+ * The framework has migrated to a registry-based context chip system.
+ * These functions are preserved ONLY for legacy test cases.
+ *
+ * FOR NEW DEVELOPMENT:
+ * - Create context chips in registries/ directory
+ * - Add markdown files in contexts/ directory
+ * - Reference chips by ID in agent configs
+ *
+ * See: registries/frontend.registry.ts and examples/agent-configs/
+ *
+ * @deprecated Use registry-based context chips instead
  */
 
 // ============================================================================
@@ -159,7 +172,10 @@ export function createListSection(title: string, items: string[]): string {
 /**
  * Template for a key-value context section
  */
-export function createKeyValueSection(title: string, entries: Array<{ key: string; value: string }>): string {
+export function createKeyValueSection(
+  title: string,
+  entries: Array<{ key: string; value: string }>
+): string {
   if (entries.length === 0) return '';
   return `## ${title}\n\n${entries.map(e => `- **${e.key}**: ${e.value}`).join('\n')}`;
 }
@@ -171,5 +187,5 @@ export default {
   renderAllInlineContext,
   createContextSection,
   createListSection,
-  createKeyValueSection
+  createKeyValueSection,
 };

@@ -22,7 +22,8 @@ export type ContextChipRegistriesKeys = keyof ContextChipRegistries;
 /**
  * Extract chip IDs for a specific registry
  */
-export type ChipIdsForRegistry<T extends ContextChipRegistriesKeys> = keyof ContextChipRegistries[T];
+export type ChipIdsForRegistry<T extends ContextChipRegistriesKeys> =
+  keyof ContextChipRegistries[T];
 
 /**
  * Union of all possible chip IDs across all registries
@@ -31,45 +32,24 @@ export type AnyChipId = {
   [K in ContextChipRegistriesKeys]: keyof (typeof contextChipRegistries)[K];
 }[ContextChipRegistriesKeys];
 
-// export const TechStackSchema = z
-//   .object({
-//     framework: z.string().optional(),
-//     language: z.string().optional(),
-//     runtime: z.string().optional(),
-//     packageManager: z.string().optional(),
-//     testing: z.string().optional(),
-//     linting: z.string().optional(),
-//     database: z.string().optional(),
-//     orm: z.string().optional(),
-//     stateManagement: z.array(z.string()).optional(),
-//     styling: z.string().optional(),
-//     buildTool: z.string().optional()
-//   })
-//   .optional();
-
-// export type TechStack = z.infer<typeof TechStackSchema>;
-
-// export const ConventionsSchema = z
-//   .object({
-//     fileNaming: z.enum(['kebab-case', 'camelCase', 'PascalCase', 'snake_case']).optional(),
-//     componentNaming: z.enum(['PascalCase', 'camelCase']).optional(),
-//     functionNaming: z.enum(['camelCase', 'snake_case', 'PascalCase']).optional(),
-//     testPattern: z.string().optional(),
-//     importOrder: z.array(z.string()).optional()
-//   })
-//   .optional();
-
-// export type Conventions = z.infer<typeof ConventionsSchema>;
-
-// export const PatternsSchema = z
-//   .object({
-//     preferred: z.array(z.string()).optional(),
-//     forbidden: z.array(z.string()).optional(),
-//     architectural: z.string().optional()
-//   })
-//   .optional();
-
-// export type Patterns = z.infer<typeof PatternsSchema>;
+// ============================================================================
+// LEGACY INLINE CONTEXT SCHEMAS (DEPRECATED)
+// ============================================================================
+// These schemas were used for inline context definitions (techStack, conventions, patterns)
+// that were directly embedded in agent configurations.
+//
+// MIGRATION NOTE:
+// The framework has migrated to a registry-based context chip system for better:
+// - Reusability across agents
+// - Type safety with validated chip IDs
+// - Single source of truth for context definitions
+// - Easier maintenance and updates
+//
+// To add new context, create context chips in the registry instead.
+// See: registries/frontend.registry.ts and contexts/*.context.md
+//
+// These schemas are preserved only for legacy test cases and will be removed in v2.0.0
+// ============================================================================
 
 // ============================================================================
 // ZOD SCHEMA
@@ -95,9 +75,9 @@ export const ContextSchema = z
     ...Object.fromEntries(
       Object.keys(contextChipRegistries).map(registryName => [
         registryName,
-        z.set(z.string()).optional() // Will be validated against actual chip IDs at runtime
+        z.set(z.string()).optional(), // Will be validated against actual chip IDs at runtime
       ])
-    )
+    ),
   })
   .optional();
 
@@ -110,9 +90,19 @@ export const ValidatedContextSchema = z
     ...Object.fromEntries(
       Object.entries(contextChipRegistries).map(([registryName, registry]) => [
         registryName,
-        z.set(z.string().refine(chipId => chipId in registry, { message: `Invalid chip ID for registry '${registryName}'. Available chips: ${Object.keys(registry).join(', ')}` })).optional()
+        z
+          .set(
+            z
+              .string()
+              .refine((chipId: string) => chipId in registry, {
+                message: `Invalid chip ID for registry '${registryName}'. Available chips: ${Object.keys(
+                  registry
+                ).join(', ')}`,
+              })
+          )
+          .optional(),
       ])
-    )
+    ),
   })
   .optional();
 

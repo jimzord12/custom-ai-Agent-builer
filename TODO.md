@@ -1,1 +1,0 @@
-- Tell Agent to check the whole codebase for all references of inline context or terms like, techstack, patterns and convertion. Now we will be only using context chips from the registries.

@@ -14,10 +14,10 @@ export const FrontendContextChipRegistry = {
     id: 'constitution',
     name: 'Project Constitution',
     description: "Project's core goals, values, and non-negotiable rules",
-    path: '.github/agent-system-minimal/contexts/constitution.context.md',
+    path: 'contexts/constitution.context.md',
     tags: ['governance', 'principles', 'values'],
     category: 'governance',
-    version: '1.0.0'
+    version: '1.0.0',
   } as ContextChipEntry,
 
   // ============================================================================
@@ -28,21 +28,41 @@ export const FrontendContextChipRegistry = {
     id: 'architecture',
     name: 'Architecture Overview',
     description: 'High-level system design, module structure, and data flow',
-    path: '.github/agent-system-minimal/contexts/architecture.context.md',
+    path: 'contexts/architecture.context.md',
     tags: ['architecture', 'design', 'system'],
     category: 'technical',
-    version: '1.0.0'
-  } as ContextChipEntry
+    version: '1.0.0',
+  } as ContextChipEntry,
+
+  'api-guidelines': {
+    id: 'api-guidelines',
+    name: 'API Design Guidelines',
+    description: 'REST API design standards, conventions, and best practices',
+    path: 'contexts/api-guidelines.context.md',
+    tags: ['api', 'rest', 'guidelines', 'standards'],
+    category: 'technical',
+    version: '1.0.0',
+  } as ContextChipEntry,
+
+  'testing-standards': {
+    id: 'testing-standards',
+    name: 'Testing Standards',
+    description: 'Comprehensive testing guidelines, patterns, and best practices',
+    path: 'contexts/testing-standards.context.md',
+    tags: ['testing', 'quality', 'standards', 'tdd'],
+    category: 'technical',
+    version: '1.0.0',
+  } as ContextChipEntry,
+
+  'code-style': {
+    id: 'code-style',
+    name: 'Code Style Guide',
+    description: 'Code formatting, naming conventions, and style standards',
+    path: 'contexts/code-style.context.md',
+    tags: ['style', 'formatting', 'conventions', 'linting'],
+    category: 'technical',
+    version: '1.0.0',
+  } as ContextChipEntry,
 
   // Add more chips here as needed
-  // Example:
-  // 'api-guidelines': {
-  //   id: 'api-guidelines',
-  //   name: 'API Design Guidelines',
-  //   description: 'REST API design standards and conventions',
-  //   path: '.github/agent-system-minimal/contexts/api-guidelines.context.md',
-  //   tags: ['api', 'rest', 'guidelines'],
-  //   category: 'technical',
-  //   version: '1.0.0'
-  // }
 } as const;
