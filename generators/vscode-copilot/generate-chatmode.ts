@@ -2,9 +2,15 @@ import * as fs from 'fs';
 import * as path from 'path';
 import type { AgentConfig } from '../../core/schema/agent.schema.js';
 import { validateAgentConfig } from '../../core/schema/agent.schema.js';
-import { ContextChipRegistries, ContextChipRegistriesKeys } from '../../core/schema/context.schema.js';
+import {
+  ContextChipRegistries,
+  ContextChipRegistriesKeys,
+} from '../../core/schema/context.schema.js';
 import { BEHAVIOR_PROMPTS } from '../../prompts/injectable/behavior-prompts.js';
-import { getPromptForPermission, getToolsForPermission } from '../../prompts/injectable/permission-prompts.js';
+import {
+  getPromptForPermission,
+  getToolsForPermission,
+} from '../../prompts/injectable/permission-prompts.js';
 import { ROLE_PROMPTS } from '../../prompts/injectable/role-prompts.js';
 import { resolveChipPath } from '../../registries/index.js';
 
@@ -63,13 +69,17 @@ async function readAgentConfig(configPath: string): Promise<AgentConfig> {
     const validation = validateAgentConfig(config);
 
     if (!validation.success) {
-      const errorMessages = validation.errors?.issues.map(e => `  - ${e.path.join('.')}: ${e.message}`).join('\n');
+      const errorMessages = validation.errors?.issues
+        .map(e => `  - ${e.path.join('.')}: ${e.message}`)
+        .join('\n');
       throw new Error(`Invalid agent configuration:\n${errorMessages}`);
     }
 
     return validation.data!;
   } catch (error) {
-    throw new Error(`Failed to read agent config: ${error instanceof Error ? error.message : String(error)}`);
+    throw new Error(
+      `Failed to read agent config: ${error instanceof Error ? error.message : String(error)}`
+    );
   }
 }
 
@@ -101,13 +111,18 @@ async function loadContextChips(config: AgentConfig): Promise<string> {
 
         if (chipId) {
           // Try to resolve from registry
-          chipPath = resolveChipPath(registry as ContextChipRegistriesKeys, chipId as keyof ContextChipRegistries[ContextChipRegistriesKeys]);
+          chipPath = resolveChipPath(
+            registry as ContextChipRegistriesKeys,
+            chipId as keyof ContextChipRegistries[ContextChipRegistriesKeys]
+          );
           if (!chipPath) {
             console.warn(`Warning: Context chip ID "${chipId}" not found in registry, skipping...`);
             continue;
           }
         } else {
-          console.warn(`Warning: Context chip "${chipId}" has neither ID nor pathFromRoot, skipping...`);
+          console.warn(
+            `Warning: Context chip "${chipId}" has neither ID nor pathFromRoot, skipping...`
+          );
           continue;
         }
 
@@ -122,7 +137,11 @@ async function loadContextChips(config: AgentConfig): Promise<string> {
         const content = fs.readFileSync(absolutePath, 'utf-8');
         contextSections.push(content);
       } catch (error) {
-        console.warn(`Warning: Failed to load context chip "${chipId}": ${error instanceof Error ? error.message : String(error)}`);
+        console.warn(
+          `Warning: Failed to load context chip "${chipId}": ${
+            error instanceof Error ? error.message : String(error)
+          }`
+        );
       }
     }
   }
@@ -253,7 +272,12 @@ ${contextChipsContent}
 /**
  * Writes the generated chatmode file to disk
  */
-function writeChatmodeFile(config: AgentConfig, content: string, outputDir: string, overwrite: boolean): string {
+function writeChatmodeFile(
+  config: AgentConfig,
+  content: string,
+  outputDir: string,
+  overwrite: boolean
+): string {
   // Create output directory if it doesn't exist
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
@@ -292,7 +316,9 @@ export async function generateChatmode(options: GeneratorOptions): Promise<Gener
       // Step 2: Validate provided config object
       const validation = validateAgentConfig(options.agentConfig);
       if (!validation.success) {
-        const errorMessages = validation.errors?.issues.map(e => `  - ${e.path.join('.')}: ${e.message}`).join('\n');
+        const errorMessages = validation.errors?.issues
+          .map(e => `  - ${e.path.join('.')}: ${e.message}`)
+          .join('\n');
         throw new Error(`Invalid agent configuration:\n${errorMessages}`);
       }
 
@@ -311,12 +337,12 @@ export async function generateChatmode(options: GeneratorOptions): Promise<Gener
 
     return {
       success: true,
-      outputPath
+      outputPath,
     };
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     };
   }
 }
@@ -328,35 +354,55 @@ export async function generateChatmode(options: GeneratorOptions): Promise<Gener
 /**
  * Main function for CLI execution
  */
-// async function main() {
-//   const args = process.argv.slice(2);
+async function main() {
+  const args = process.argv.slice(2);
 
-//   if (args.length === 0) {
-//     console.error('Usage: tsx generate-chatmode.ts <config-path> [--output-dir <dir>] [--overwrite]');
-//     process.exit(1);
-//   }
+  if (args.length === 0) {
+    console.error(
+      'Usage: tsx generate-chatmode.ts <config-path> [--output-dir <dir>] [--overwrite]'
+    );
+    process.exit(1);
+  }
 
-//   const configPath = args[0];
-//   const outputDirIndex = args.indexOf('--output-dir');
-//   const outputDir = outputDirIndex >= 0 ? args[outputDirIndex + 1] : undefined;
-//   const overwrite = args.includes('--overwrite');
+  const configPath = args[0];
+  const outputDirIndex = args.indexOf('--output-dir');
+  const outputDir = outputDirIndex >= 0 ? args[outputDirIndex + 1] : undefined;
+  const overwrite = args.includes('--overwrite');
 
-//   console.log('Generating VS Code Copilot chatmode...');
-//   console.log(`Config: ${configPath}`);
-//   if (outputDir) console.log(`Output: ${outputDir}`);
+  console.log('🤖 Generating VS Code Copilot chatmode...');
+  console.log(`📄 Config: ${configPath}`);
+  if (outputDir) console.log(`📁 Output: ${outputDir}`);
+  console.log('');
 
-//   const result = await generateChatmode({
-//     agentConfig: configPath,
-//     outputDir,
-//     overwrite
-//   });
+  const result = await generateChatmode({
+    agentConfig: configPath,
+    outputDir,
+    overwrite,
+  });
 
-//   if (result.success) {
-//     console.log(`✓ Successfully generated chatmode: ${result.outputPath}`);
-//   } else {
-//     console.error(`✗ Failed to generate chatmode:\n${result.error}`);
-//     process.exit(1);
-//   }
-// }
+  if (result.success) {
+    console.log(`✅ Successfully generated chatmode: ${result.outputPath}`);
+    console.log('');
+    console.log('Next steps:');
+    console.log('1. Open VS Code in this workspace');
+    console.log('2. Start a new chat');
+    console.log("3. Type '@' to see your custom chatmode");
+  } else {
+    console.error(`❌ Failed to generate chatmode:\n${result.error}`);
+    process.exit(1);
+  }
+}
+
+// Execute main function if this file is run directly
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __argv1 = process.argv[1] ? path.resolve(process.argv[1]) : '';
+
+if (__filename === __argv1) {
+  main().catch(error => {
+    console.error('Unexpected error:', error);
+    process.exit(1);
+  });
+}
 
 export default generateChatmode;

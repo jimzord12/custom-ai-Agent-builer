@@ -106,6 +106,7 @@ Tests mirror the project structure:
 ### 4.1 Context Chip Examples
 
 - [x] 4.1.1 Create **Constitution** context chip
+
   - Path: `contexts/constitution.context.md`
   - Content: Project's core goals, values, non-negotiable rules
 
@@ -135,14 +136,14 @@ Tests mirror the project structure:
 
 ### 5.1 PowerShell Script Updates
 
-- [ ] 5.1.1 Update `scripts/generate.ps1` to call VS Code generator
-- [ ] 5.1.2 Add parameter for agent config path
-- [ ] 5.1.3 Add validation and helpful error messages
+- [x] 5.1.1 Update `scripts/generate.ps1` to call VS Code generator
+- [x] 5.1.2 Add parameter for agent config path
+- [x] 5.1.3 Add validation and helpful error messages
 
 ### 5.2 Bash Script Updates (Optional for MVP)
 
-- [ ] 5.2.1 Update `scripts/generate.sh` to call VS Code generator
-- [ ] 5.2.2 Mirror PowerShell script functionality
+- [x] 5.2.1 Update `scripts/generate.sh` to call VS Code generator
+- [x] 5.2.2 Mirror PowerShell script functionality
 
 ---
 
@@ -179,7 +180,7 @@ Tests mirror the project structure:
 ## Progress Tracking
 
 - **Total Tasks**: 61
-- **Completed**: 44
+- **Completed**: 48
 - **In Progress**: 0
 - **Blocked**: 0
 
