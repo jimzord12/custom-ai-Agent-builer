@@ -52,7 +52,7 @@ export const myAgent: AgentConfig = {
 
   role: 'implementer',
   permissions: { level: 'controlled' },
-  behavior: { profile: 'autonomous' }
+  behavior: { profile: 'autonomous' },
 };
 
 export default myAgent;
@@ -131,7 +131,7 @@ export const fullExample: AgentConfig = {
       framework: 'React Native',
       language: 'TypeScript',
       testing: 'Jest',
-      database: 'SQLite'
+      database: 'SQLite',
       // ... more tech stack info
     },
 
@@ -140,15 +140,15 @@ export const fullExample: AgentConfig = {
       componentNaming: 'PascalCase',
       functionNaming: 'camelCase',
       testPattern: '*.test.ts',
-      importOrder: ['external', 'internal', 'relative']
+      importOrder: ['external', 'internal', 'relative'],
     },
 
     patterns: {
       preferred: ['Functional components with hooks', 'TypeORM entities', 'Service layer pattern'],
       forbidden: ['Any types', 'console.log in production'],
-      architectural: 'Clean Architecture'
-    }
-  }
+      architectural: 'Clean Architecture',
+    },
+  },
 };
 ```
 
@@ -194,6 +194,33 @@ See the `examples/` directory for ready-to-use configurations:
 ```bash
 npx tsx .github/agent-system-prototype/generators/copilot-cli/generate-agent.ts .github/agent-system-prototype/examples/index.ts
 ```
+
+## 🛠️ VS Code Copilot Chatmode generator (MVP)
+
+This repository's MVP targets VS Code Copilot chatmodes. Use the `generators/vscode-copilot/generate-chatmode.ts` generator to create `.chatmode.md` files that Copilot will load.
+
+Example (generate `code-reviewer` chatmode):
+
+```pwsh
+npx tsx generators/vscode-copilot/generate-chatmode.ts examples/agent-configs/code-reviewer.ts --output-dir .github/chatmodes --overwrite
+```
+
+The generated file will live at `.github/chatmodes/code-reviewer.chatmode.md` and contains YAML frontmatter + markdown body that Copilot prepends to prompts when the chatmode is selected.
+
+## 🧪 Tests and validation
+
+We include small, runnable test scripts that validate the generator end-to-end and context injection. Run them from the workspace root:
+
+```pwsh
+# Run the full test harness (discovers test cases under tests/cases)
+npx tsx tests/run-all-tests.ts generators
+
+# Or run a single test directly
+npx tsx tests/cases/generators/001-generate-chatmode/index.ts
+npx tsx tests/cases/generators/002-context-chip-injection/index.ts
+```
+
+If you want stricter frontmatter validation in your own scripts, we use the `yaml` package (already added) to parse and assert the generated YAML frontmatter structure.
 
 ---
 
@@ -246,8 +273,8 @@ export const base: AgentConfig = {
     },
     patterns: {
       /* preferred patterns */
-    }
-  }
+    },
+  },
 };
 
 // Specialized agents reference the base
@@ -255,7 +282,7 @@ export const builder: AgentConfig = {
   name: 'Feature Builder',
   role: 'implementer',
   permissions: { level: 'controlled' },
-  behavior: { profile: 'autonomous' }
+  behavior: { profile: 'autonomous' },
   // Inherits context from base when both are loaded
 };
 
@@ -277,20 +304,20 @@ const agent: AgentConfig = {
       framework: 'Next.js',
       language: 'TypeScript',
       testing: 'Vitest',
-      styling: 'Tailwind CSS'
+      styling: 'Tailwind CSS',
     },
 
     conventions: {
       fileNaming: 'kebab-case',
-      componentNaming: 'PascalCase'
+      componentNaming: 'PascalCase',
     },
 
     patterns: {
       preferred: ['Server Components', 'App Router'],
       forbidden: ['Pages Router'],
-      architectural: 'Serverless Architecture'
-    }
-  }
+      architectural: 'Serverless Architecture',
+    },
+  },
 };
 ```
 
@@ -365,7 +392,13 @@ The following features are intentionally **not** included in this minimal versio
 ```typescript
 type RoleName = 'analyst' | 'architect' | 'implementer' | 'reviewer' | 'guide' | 'orchestrator';
 type PermissionLevelName = 'read-only' | 'documentation' | 'controlled' | 'full';
-type BehaviorProfileName = 'concise' | 'detailed' | 'interactive' | 'autonomous' | 'creative' | 'conservative';
+type BehaviorProfileName =
+  | 'concise'
+  | 'detailed'
+  | 'interactive'
+  | 'autonomous'
+  | 'creative'
+  | 'conservative';
 ```
 
 ---

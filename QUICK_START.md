@@ -18,7 +18,7 @@ export const myAgent: AgentConfig = {
 
   role: 'implementer',
   permissions: { level: 'controlled' },
-  behavior: { profile: 'autonomous' }
+  behavior: { profile: 'autonomous' },
 };
 
 export default myAgent;
@@ -36,6 +36,15 @@ npx tsx generators/vscode-copilot/generate-chatmode.ts examples/my-agent.ts --ov
 ```
 
 This creates `.github/chatmodes/my-first-agent.chatmode.md`.
+
+### Generate an example chatmode (code reviewer)
+
+```pwsh
+# From the repository root
+npx tsx generators/vscode-copilot/generate-chatmode.ts examples/agent-configs/code-reviewer.ts --output-dir .github/chatmodes --overwrite
+```
+
+This will create `.github/chatmodes/code-reviewer.chatmode.md` which you can open to inspect YAML frontmatter and the markdown body that will be prepended to Copilot prompts.
 
 ---
 
@@ -129,20 +138,20 @@ export const agent: AgentConfig = {
       framework: 'React Native',
       language: 'TypeScript',
       testing: 'Jest',
-      database: 'SQLite'
+      database: 'SQLite',
     },
 
     conventions: {
       fileNaming: 'kebab-case',
       componentNaming: 'PascalCase',
-      functionNaming: 'camelCase'
+      functionNaming: 'camelCase',
     },
 
     patterns: {
       preferred: ['Hooks', 'Functional components'],
-      forbidden: ['Any types', 'console.log']
-    }
-  }
+      forbidden: ['Any types', 'console.log'],
+    },
+  },
 };
 ```
 
@@ -161,14 +170,14 @@ export const agent: AgentConfig = {
     // Use chips from the registry
     chips: new Set([
       { id: 'constitution', name: 'Project Constitution' },
-      { id: 'architecture', name: 'Architecture Overview' }
-    ])
+      { id: 'architecture', name: 'Architecture Overview' },
+    ]),
 
     // Or use custom chips with direct paths
     // chips: new Set([
     //   { name: 'Custom Chip', pathFromRoot: './contexts/my-chip.md' }
     // ])
-  }
+  },
 };
 ```
 
@@ -240,7 +249,7 @@ Best for extensive documentation:
 context: {
   chips: new Set([
     { id: 'constitution', name: 'Project Constitution' },
-    { id: 'architecture', name: 'Architecture Overview' }
+    { id: 'architecture', name: 'Architecture Overview' },
   ]);
 }
 ```
