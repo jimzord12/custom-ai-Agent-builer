@@ -5,7 +5,11 @@
  * Uncomment the error examples to see TypeScript catch invalid usage.
  */
 
-import { Context, ContextSchema, ValidatedContextSchema } from '../../core/schema/context.schema.js';
+import {
+  Context,
+  createContextSchema,
+  ValidatedContextSchema,
+} from '../../core/schema/context.schema.js';
 
 // ============================================================================
 // ✅ VALID USAGE EXAMPLES
@@ -13,17 +17,17 @@ import { Context, ContextSchema, ValidatedContextSchema } from '../../core/schem
 
 // Example 1: Type-safe context with correct chip IDs
 const validContext: Context = {
-  frontend: new Set(['architecture', 'constitution'] as const)
+  frontend: new Set(['architecture', 'constitution'] as const),
 };
 
 // Example 2: Empty sets are fine
 const validContextEmpty: Context = {
-  frontend: new Set()
+  frontend: new Set(),
 };
 
 // Example 3: Single chip
 const validContextSingle: Context = {
-  frontend: new Set(['architecture'] as const)
+  frontend: new Set(['architecture'] as const),
 };
 
 // ============================================================================
@@ -50,21 +54,21 @@ const validContextSingle: Context = {
 // ============================================================================
 
 // Basic schema validation (validates structure, not chip IDs)
-const basicValidation = ContextSchema.safeParse({
-  frontend: new Set(['architecture', 'constitution'])
+const basicValidation = createContextSchema().safeParse({
+  frontend: new Set(['architecture', 'constitution']),
 });
 
 console.log('Basic validation:', basicValidation.success); // true
 
 // Validated schema (validates both structure AND chip IDs)
 const validatedSuccess = ValidatedContextSchema.safeParse({
-  frontend: new Set(['architecture', 'constitution'])
+  frontend: new Set(['architecture', 'constitution']),
 });
 
 console.log('Validated (correct chips):', validatedSuccess.success); // true
 
 const validatedFailure = ValidatedContextSchema.safeParse({
-  frontend: new Set(['nonexistent'])
+  frontend: new Set(['nonexistent']),
 });
 
 console.log('Validated (wrong chip):', validatedFailure.success); // false

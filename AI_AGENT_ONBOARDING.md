@@ -10,6 +10,14 @@
 
 A **TypeScript framework** for creating specialized AI coding agents for **VS Code Copilot** (chatmodes). Instead of writing freeform markdown agent instructions, developers define agents using type-safe TypeScript configurations that get validated and compiled into platform-specific formats.
 
+In a nutshell, this project provides a structured and modular way to define AI agents with:
+
+- **Agent Config**, that specifies:
+  - role, Its an enum can can one of the defined archetypes: `analyst`, `architect`, `implementer`, `reviewer`, `guide`, `orchestrator`. The user can define custom roles as well but they won't have predefined prompts.
+  - permissions,
+  - behavior, and
+  - context
+
 ### Core Value Proposition
 
 - ✅ **Type-safe** agent definitions with Zod validation
@@ -78,7 +86,8 @@ Defines the structure of all agent configurations using Zod schemas:
 // Primitives (core/schema/primitives.schema.ts)
 RoleName = 'analyst' | 'architect' | 'implementer' | 'reviewer' | 'guide' | 'orchestrator';
 PermissionLevelName = 'read-only' | 'documentation' | 'controlled' | 'full';
-BehaviorProfileName = 'concise' | 'detailed' | 'interactive' | 'autonomous' | 'creative' | 'conservative';
+BehaviorProfileName =
+  'concise' | 'detailed' | 'interactive' | 'autonomous' | 'creative' | 'conservative';
 
 // Agent Config (core/schema/agent.schema.ts)
 interface AgentConfig {
@@ -160,11 +169,11 @@ FrontendContextChipRegistry = {
     description: "Project's core goals, values, rules",
     tags: ['governance', 'principles'],
     category: 'governance',
-    version: '1.0.0'
+    version: '1.0.0',
   },
   architecture: {
     /* ... */
-  }
+  },
 };
 
 // Reference in agent config
@@ -270,8 +279,8 @@ export const myAgent: AgentConfig = {
   behavior: { profile: 'autonomous' },
 
   context: {
-    frontend: new Set(['constitution', 'architecture'])
-  }
+    frontend: new Set(['constitution', 'architecture']),
+  },
 };
 
 export default myAgent;
@@ -455,16 +464,19 @@ tests/
 ### ✅ Completed Features
 
 1. **Core Schema System**
+
    - Agent configuration validation
    - Primitive types (role, permission, behavior)
    - Context system with registry support
 
 2. **Injectable Prompts**
+
    - All 6 role prompts
    - All 6 behavior prompts
    - All 4 permission prompts with tool mappings
 
 3. **Generator**
+
    - VS Code chatmode file generation
    - Prompt injection logic
    - Context chip loading
@@ -472,16 +484,19 @@ tests/
    - Markdown body rendering
 
 4. **Context System**
+
    - Registry-based chip management
    - Direct path chip support
    - Type-safe chip references
    - Context chip loader
 
 5. **Templates**
+
    - Chatmode output template
    - Context sections template
 
 6. **Testing Framework**
+
    - 5 comprehensive test cases
    - Test utilities (assertions, file helpers)
    - Test runner with reporting
@@ -583,8 +598,8 @@ export const FrontendContextChipRegistry = {
     path: 'contexts/api-guidelines.context.md',
     tags: ['api', 'rest', 'guidelines'],
     category: 'technical',
-    version: '1.0.0'
-  }
+    version: '1.0.0',
+  },
 };
 ```
 
@@ -684,8 +699,8 @@ export const agent: AgentConfig = {
 
   // Optional
   context: {
-    frontend: new Set(['constitution', 'architecture'])
-  }
+    frontend: new Set(['constitution', 'architecture']),
+  },
 };
 
 export default agent;

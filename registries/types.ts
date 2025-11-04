@@ -1,5 +1,3 @@
-export type ContextCategoryType = 'project' | 'technical' | 'governance' | 'documentation' | 'custom';
-
 export interface ContextChipEntry {
   /** Unique identifier for the chip */
   id: string;
@@ -12,7 +10,7 @@ export interface ContextChipEntry {
   /** Tags for categorization and search */
   tags?: string[];
   /** Category for organization */
-  category?: ContextCategoryType;
+  category?: string;
   /** Version of the chip (for tracking updates) */
   version?: string;
 }

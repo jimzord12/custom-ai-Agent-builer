@@ -15,6 +15,13 @@
     "rootDir": "./",
     "types": ["node"]
   },
-  "include": ["core/**/*.ts", "generators/**/*.ts", "examples/**/*.ts", "prompts/**/*.ts", "registries/**/*.ts", "tests/**/*.ts"],
+  "include": [
+    "core/**/*.ts",
+    "generators/**/*.ts",
+    "examples/**/*.ts",
+    "prompts/**/*.ts",
+    "registries/**/*.ts",
+    "tests/**/*.ts"
+  ],
   "exclude": ["node_modules", "dist"]
 }

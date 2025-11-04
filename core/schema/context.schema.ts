@@ -7,7 +7,8 @@
  */
 
 import z from 'zod';
-import { contextChipRegistries } from '../../registries/index.js';
+import { allContextChipRegistries } from '../../registries/index.js';
+import { ContextChipRegistry } from '../../registries/types.js';
 
 // ============================================================================
 // TYPE-SAFE CONTEXT REGISTRY TYPES
@@ -16,7 +17,7 @@ import { contextChipRegistries } from '../../registries/index.js';
 /**
  * Extract registry names from the context chip registries
  */
-export type ContextChipRegistries = typeof contextChipRegistries;
+export type ContextChipRegistries = typeof allContextChipRegistries;
 export type ContextChipRegistriesKeys = keyof ContextChipRegistries;
 
 /**
@@ -29,7 +30,7 @@ export type ChipIdsForRegistry<T extends ContextChipRegistriesKeys> =
  * Union of all possible chip IDs across all registries
  */
 export type AnyChipId = {
-  [K in ContextChipRegistriesKeys]: keyof (typeof contextChipRegistries)[K];
+  [K in ContextChipRegistriesKeys]: keyof (typeof allContextChipRegistries)[K];
 }[ContextChipRegistriesKeys];
 
 // ============================================================================
@@ -69,17 +70,21 @@ export type AnyChipId = {
  * 1. Keys must be valid registry names (e.g., 'frontend')
  * 2. Values must be sets of valid chip IDs from that registry
  */
-export const ContextSchema = z
-  .object({
-    // Dynamically create schema properties for each registry
-    ...Object.fromEntries(
-      Object.keys(contextChipRegistries).map(registryName => [
-        registryName,
-        z.set(z.string()).optional(), // Will be validated against actual chip IDs at runtime
-      ])
-    ),
-  })
-  .optional();
+export const createContextSchema = <
+  T extends Record<string, ContextChipRegistry> = ContextChipRegistries
+>(
+  registries?: T
+) =>
+  z
+    .object({
+      ...Object.fromEntries(
+        Object.keys(registries ?? allContextChipRegistries).map(registryName => [
+          registryName,
+          z.set(z.string()).optional(),
+        ])
+      ),
+    })
+    .optional();
 
 /**
  * Runtime-validated context schema with chip ID validation
@@ -88,17 +93,15 @@ export const ContextSchema = z
 export const ValidatedContextSchema = z
   .object({
     ...Object.fromEntries(
-      Object.entries(contextChipRegistries).map(([registryName, registry]) => [
+      Object.entries(allContextChipRegistries).map(([registryName, registry]) => [
         registryName,
         z
           .set(
-            z
-              .string()
-              .refine((chipId: string) => chipId in registry, {
-                message: `Invalid chip ID for registry '${registryName}'. Available chips: ${Object.keys(
-                  registry
-                ).join(', ')}`,
-              })
+            z.string().refine((chipId: string) => chipId in registry, {
+              message: `Invalid chip ID for registry '${registryName}'. Available chips: ${Object.keys(
+                registry
+              ).join(', ')}`,
+            })
           )
           .optional(),
       ])
@@ -120,4 +123,4 @@ export type Context = {
 /**
  * Inferred type from Zod schema (less strict, used for parsing)
  */
-export type ContextSchemaType = z.infer<typeof ContextSchema>;
+export type ContextSchemaType = z.infer<ReturnType<typeof createContextSchema>>;

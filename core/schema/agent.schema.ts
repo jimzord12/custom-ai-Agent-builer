@@ -1,6 +1,9 @@
 import { z } from 'zod';
-import { ContextSchema } from './context.schema.js';
-import { BehaviorProfileName, PermissionLevelName, RoleName } from './primitives.schema.js';
+import {
+  exampleContextChipRegistries,
+  internalContextChipRegistries,
+} from '../../registries/index.js';
+import { ChipIdsForRegistry, createContextSchema } from './registry-schema-builder.js';
 
 /**
  * MINIMAL AGENT CONFIGURATION SCHEMA
@@ -10,24 +13,25 @@ import { BehaviorProfileName, PermissionLevelName, RoleName } from './primitives
  */
 
 // ============================================================================
-// PERMISSIONS (Simplified)
+// TYPE-SAFE CHARACTER AND CONTEXT TYPES
 // ============================================================================
 
-export const PermissionsSchema = z.object({
-  level: PermissionLevelName
-});
+/**
+ * Type-safe character definition with IntelliSense support
+ */
+export type AgentCharacter = {
+  role: Set<ChipIdsForRegistry<typeof internalContextChipRegistries.role>>;
+  permissions: Set<ChipIdsForRegistry<typeof internalContextChipRegistries.permissions>>;
+  behaviors?: Set<ChipIdsForRegistry<typeof internalContextChipRegistries.behaviors>>;
+};
 
-export type Permissions = z.infer<typeof PermissionsSchema>;
-
-// ============================================================================
-// BEHAVIOR (Simplified)
-// ============================================================================
-
-export const BehaviorSchema = z.object({
-  profile: BehaviorProfileName
-});
-
-export type Behavior = z.infer<typeof BehaviorSchema>;
+/**
+ * Type-safe project context with IntelliSense support
+ */
+export type AgentContext = {
+  frontend?: Set<ChipIdsForRegistry<typeof exampleContextChipRegistries.frontend>>;
+  // Add more as registries are added
+};
 
 // ============================================================================
 // MAIN AGENT CONFIGURATION
@@ -40,6 +44,7 @@ export type Behavior = z.infer<typeof BehaviorSchema>;
  */
 export const AgentConfigSchema = z.object({
   // Required core fields
+  id: z.uuid().describe('Unique agent identifier (UUID)'),
   name: z.string().min(1).max(100).describe('Human-readable agent name'),
 
   version: z
@@ -49,17 +54,35 @@ export const AgentConfigSchema = z.object({
 
   description: z.string().max(500).describe('Brief description of agent purpose'),
 
-  role: RoleName.describe('Primary role defining agent function'),
+  // Character traits and personality (framework-managed)
+  character: createContextSchema(internalContextChipRegistries, {
+    role: { required: true, allowMultiple: false }, // Must select exactly ONE role
+    permissions: { required: true, allowMultiple: false }, // Must select exactly ONE permission level
+    behaviors: { required: false, allowMultiple: true }, // Can select MULTIPLE behaviors (optional)
+  }).describe('Character traits and personality'),
 
-  permissions: PermissionsSchema.describe('Permission level for agent operations'),
-
-  behavior: BehaviorSchema.describe('Communication and interaction style'),
-
-  // Optional context
-  context: ContextSchema.describe('Project-specific context (tech stack, conventions, patterns)')
+  // Optional project-specific context (user-managed)
+  context: createContextSchema(exampleContextChipRegistries).describe(
+    'Project-specific context (tech stack, conventions, patterns)'
+  ),
 });
 
-export type AgentConfig = z.infer<typeof AgentConfigSchema>;
+/**
+ * Type-safe agent configuration with IntelliSense
+ */
+export type AgentConfig = {
+  id: string;
+  name: string;
+  version: string;
+  description: string;
+  character: AgentCharacter;
+  context?: AgentContext;
+};
+
+/**
+ * Zod-inferred type (less strict, used for validation)
+ */
+export type AgentConfigZod = z.infer<typeof AgentConfigSchema>;
 
 // ============================================================================
 // UTILITY FUNCTIONS
@@ -70,7 +93,7 @@ export type AgentConfig = z.infer<typeof AgentConfigSchema>;
  */
 export function validateAgentConfig(config: unknown): {
   success: boolean;
-  data?: AgentConfig;
+  data?: AgentConfigZod;
   errors?: z.ZodError;
 } {
   const result = AgentConfigSchema.safeParse(config);
@@ -78,21 +101,30 @@ export function validateAgentConfig(config: unknown): {
   if (result.success) {
     return {
       success: true,
-      data: result.data
+      data: result.data,
     };
   } else {
     return {
       success: false,
-      errors: result.error
+      errors: result.error,
     };
   }
 }
 
 /**
  * Parses an agent configuration (throws on error)
+ * Returns Zod-validated type
  */
-export function parseAgentConfig(config: unknown): AgentConfig {
+export function parseAgentConfig(config: unknown): AgentConfigZod {
   return AgentConfigSchema.parse(config);
+}
+
+/**
+ * Type guard to check if config is a valid AgentConfig
+ */
+export function isAgentConfig(config: unknown): config is AgentConfig {
+  const result = AgentConfigSchema.safeParse(config);
+  return result.success;
 }
 
 export default AgentConfigSchema;
