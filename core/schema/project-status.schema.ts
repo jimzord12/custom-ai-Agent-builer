@@ -1,17 +1,30 @@
 import { z } from 'zod';
 
 // Base enums for consistent values
-const StatusEnum = z.enum(['Not Started', 'In Progress', 'Completed', 'Blocked']);
+const StatusEnum = z.enum(['Not Started', 'In Progress', 'Completed', 'Blocked', 'Implemented', 'Tested', 'Reviewed', 'Committed', 'Cancelled']);
 const PriorityEnum = z.enum(['Low', 'Medium', 'High', 'Critical']);
 const ComplexityEnum = z.enum(['Low', 'Medium', 'High']);
 const AssigneeTypeEnum = z.enum(['ai-agent', 'human']);
 const FeatureTypeEnum = z.enum(['new-feature', 'bug-fix', 'improvement', 'doc', 'chore']);
-
+const ReviewStatusEnum = z.enum(['Approved', 'Skipped', 'Rejected'])
 // Assignee schema
 const AssigneeSchema = z.object({
   type: AssigneeTypeEnum,
   name: z.string()
 });
+
+// Review schema
+const ReviewSchema = z.object({
+  reviewDate: string;              // ISO timestamp
+  reviewer: string;                // display name/role
+  reviewIndex: number;             // integer review counter
+  status: ReviewStatusEnum
+
+  blockers: string[] = [];          // array; empty if none
+  reviewFile: string;               // path to md doc
+  overallQuality: string;           // e.g. "9.9/10"
+  recommendations?: string[];       // next steps / improvements
+)}
 
 // Task schema
 const TaskSchema = z.object({
@@ -20,9 +33,10 @@ const TaskSchema = z.object({
   status: StatusEnum,
   estimatedTime: z.string(),
   priority: PriorityEnum,
-  assignee: z.string().nullable(),
+  assignee: AssigneeSchema,
   affectedFiles: z.array(z.string()),
-  dependencies: z.array(z.string())
+  dependencies: z.array(z.string()),
+  review: ReviewSchema
 });
 
 // Phase schema
@@ -33,7 +47,9 @@ const PhaseSchema = z.object({
   duration: z.string(),
   assignees: z.array(AssigneeSchema),
   tasks: z.array(TaskSchema),
+  assignees: z.array(AssAssigneeSchema)
   dependencies: z.array(z.string()).optional()
+  review: ReviewSchema
 });
 
 // Feature schema (with optional fields for different feature types)
@@ -117,3 +133,4 @@ export const safeValidateAssignee = (data: unknown) => {
   return AssigneeSchema.safeParse(data);
 };
 3;
+
