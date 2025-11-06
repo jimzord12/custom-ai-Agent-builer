@@ -25,14 +25,6 @@ export type AgentCharacter = {
   behaviors?: Set<ChipIdsForRegistry<typeof internalContextChipRegistries.behaviors>>;
 };
 
-/**
- * Type-safe project context with IntelliSense support
- */
-export type AgentContext = {
-  frontend?: Set<ChipIdsForRegistry<typeof exampleContextChipRegistries.frontend>>;
-  // Add more as registries are added
-};
-
 // ============================================================================
 // MAIN AGENT CONFIGURATION
 // ============================================================================
@@ -128,3 +120,4 @@ export function isAgentConfig(config: unknown): config is AgentConfig {
 }
 
 export default AgentConfigSchema;
+
